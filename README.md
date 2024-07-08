@@ -15,7 +15,7 @@ a voting system where registered users can vote for their preferred candidate.
 
 ## dbmodel
 
-![db schema](./voting-system/src/main/resources/dbmodel.png)
+![db schema](./src/main/resources/dbmodel.png)
 
 ## EXPLAINING THE MODEL
 
