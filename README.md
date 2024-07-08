@@ -67,7 +67,7 @@ JWT_SECRET=your_secret_key
 ```
 
 - run the project
-- a note : make sure to add the information as i mentioned in the application-local.properties file
+- a note : make sure to add the information as i mentioned in the .env file
 
 ```
  cd voting-system
