@@ -21,71 +21,75 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 
 /*
-    AuthConfig is used to configure the authentication process
-    It is used to configure the authentication provider
-    and the userDetailsService
-
+ * AuthConfig is used to configure the authentication process
+ * It is used to configure the authentication provider
+ * and the userDetailsService
+ *
  */
 public class AuthConfig {
-    private static final Logger log = LoggerFactory.getLogger(AuthConfig.class);
-    private final UserRepository userRepository;
+  private static final Logger log = LoggerFactory.getLogger(AuthConfig.class);
+  private final UserRepository userRepository;
 
-    @Bean
-    // this is used to load the user from the database
-    public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
+  @Bean
+  // this is used to load the user from the database
+  public UserDetailsService userDetailsService() {
+    return username
+        -> userRepository.findByUsername(username).orElseThrow(
+            () -> new RuntimeException("User not found"));
+  }
 
-    @Bean
-    // this is used to authenticate the user
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(userDetailsService());
-        return provider;
-    }
+  @Bean
+  // this is used to authenticate the user
+  public AuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    provider.setPasswordEncoder(passwordEncoder());
+    provider.setUserDetailsService(userDetailsService());
+    return provider;
+  }
 
-    @Bean
-    // this is used to authenticate the user it maps the authentication provider to the authentication manager
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+  @Bean
+  // this is used to authenticate the user it maps the authentication provider
+  // to the authentication manager
+  public AuthenticationManager
+  authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+      throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
+  }
 
-    @Bean
-    // this is used to encode the password
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(11);
-    }
+  @Bean
+  // this is used to encode the password
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder(11);
+  }
 
-    // create default admin user
-    @Bean
-    public CommandLineRunner createDefaultAdminUser() {
-        return _ -> {
-            try {
-                log.info("Creating default admin user");
-                log.info("Checking if admin user exists");
-                if (!userRepository.existsByUsername("admin")) {
-                    log.info("Admin user does not exist, creating default admin user");
+  // create default admin user
+  @Bean
+  public CommandLineRunner createDefaultAdminUser() {
+    return run -> {
+      try {
+        log.info("Creating default admin user");
+        log.info("Checking if admin user exists");
+        if (!userRepository.existsByUsername("admin")) {
+          log.info("Admin user does not exist, creating default admin user");
 
-                    log.info("Creating default admin user");
-                    User user = User.builder()
-                            .firstname("admin")
-                            .lastname("admin")
-                            .username("admin")
-                            .email("admin")
-                            .password(passwordEncoder().encode("admin"))
-                            .usertype(USERTYPE.ADMIN)
-                            .build();
+          log.info("Creating default admin user");
+          User user = User.builder()
+                          .firstname("admin")
+                          .lastname("admin")
+                          .username("admin")
+                          .email("admin")
+                          .password(passwordEncoder().encode("admin"))
+                          .usertype(USERTYPE.ADMIN)
+                          .build();
 
-                    log.info("Saving default admin user to database");
-                    userRepository.save(user);
-                }else {
-                    log.info("Admin user already exists");
-                }
-            }catch (Exception e){
-                log.error("Error creating default admin user");
-            }
-        };
-    }
+          log.info("Saving default admin user to database");
+          userRepository.save(user);
+        } else {
+          log.info("Admin user already exists");
+        }
+      } catch (Exception e) {
+        log.error("Error creating default admin user");
+      }
+    };
+  }
 }
