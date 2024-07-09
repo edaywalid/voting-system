@@ -1,4 +1,6 @@
-const apiBaseUrl = "http://localhost:8080/api/v1";
+
+const apiBaseUrl = "https://voting-system.azurewebsites.net/api/v1";
+
 
 // Utility function to fetch with authorization
 const fetchWithAuth = (url, options = {}) => {
